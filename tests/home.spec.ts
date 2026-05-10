@@ -1,65 +1,58 @@
 import { expect, test } from '@playwright/test';
 import { HomePage } from '../pages/HomePage';
-import { SearchResultPage } from '../pages/SearchResultPage';
-import {BookingPage} from '../pages/BookingPage';
 import { bookingTestData } from '../utils/testData';
 
 let homePage: HomePage;
-let searchResultPage: SearchResultPage;
-let bookingPage: BookingPage;
 
 test.beforeEach(async ({ page }) => {
     homePage = new HomePage(page);
-    searchResultPage = new SearchResultPage(page);
-    bookingPage = new BookingPage(page);
 
     await homePage.navigate();
 
 })
 
-test('Select source and destination', async ({ page }) => {
-    await expect(homePage.getSearchBtn()).toBeVisible();
+test('UI Validation: Verify core elements are visible', async ({ page }) => {
+    await test.step('Verify landing page header and search button', async () => {
+        // Validation: Ensure the Search button is visible and enabled
+        await expect(page).toHaveTitle(/redbus/i);
+        await expect(homePage.getSearchBtn()).toBeVisible();
+        await expect(homePage.getSearchBtn()).toBeEnabled();
+    });
 
-    await homePage.fillSourceField(bookingTestData.source.short);
-    await homePage.selectSourceFromDropdown(bookingTestData.source.long);
+    await test.step('Verify input fields are present', async () => {
+        await expect(homePage.getSrcField()).toBeVisible();
+        await expect(homePage.getDstField()).toBeVisible();
+    });
+});
 
-    await homePage.fillDestinationField(bookingTestData.destination.short);
-    await homePage.selectDestinationFromDropdown(bookingTestData.destination.long);
+test('Functionality: Source and Destination selection logic', async ({  }) => {
+    await test.step('Input and select source city', async () => {
+        await homePage.fillSourceField(bookingTestData.source.short);
+        await homePage.selectSourceFromDropdown(bookingTestData.source.long);
 
+        // Assert: Verify the field value updated
+        await expect(homePage.getSrcField()).toHaveValue(bookingTestData.source.long);
+    });
+
+    await test.step('Input and select destination city', async () => {
+        await homePage.fillDestinationField(bookingTestData.destination.short);
+        await homePage.selectDestinationFromDropdown(bookingTestData.destination.long);
+
+        // Assert: Verify the field value updated
+        await expect(homePage.getDstField()).toHaveValue(bookingTestData.destination.long);
+    });
+});
+
+test('Calendar Validation: Date picker navigation', async ({ }) => {
     const relativeDate = bookingTestData.date.getRelativeDate();
-    await homePage.clickDateField();
 
-    await homePage.selectDate(relativeDate.day, relativeDate.month, relativeDate.year);
+    await test.step('Open calendar and select relative date', async () => {
+        await homePage.clickDateField();
+        await homePage.selectDate(relativeDate.day, relativeDate.month, relativeDate.year);
+    });
 
-    await homePage.clickSearchBtn();
-
-    //SEARCH PAGE TESTS STARTS FROM HERE
-    await expect(page).toHaveTitle(new RegExp(`${bookingTestData.source.long} to ${bookingTestData.destination.long} Bus`));
-
-    const srcInUrl = bookingTestData.source.long.toLowerCase();
-    const dstInUrl = bookingTestData.destination.long.toLowerCase();
-    await expect(page).toHaveURL(new RegExp(`${srcInUrl}-to-${dstInUrl}`));
-
-    const busesFoundElement = searchResultPage.getBusesFoundElement();
-    await expect(busesFoundElement).toBeVisible();
-    const busesFoundText = await busesFoundElement.innerText();
-    console.log(`Buses found text: ${busesFoundText}`);
-
-    await searchResultPage.applyFilter(bookingTestData.getRandomFilter());
-
-    await expect(searchResultPage.getBusCards().first()).toBeVisible();
-    await searchResultPage.selectRandomBus();
-
-    await expect(bookingPage.getTabList()).toBeVisible();
-
-
-    await bookingPage.selectSeat();
-
-    await bookingPage.switchToBoardDropPointsTab();
-
-    await bookingPage.selectRandomBoardingPoint();
-    await bookingPage.selectRandomDroppingPoint();
-
-
-    await expect(bookingPage.getSelectedTab()).toHaveAttribute('aria-label', /Passenger/i);
+    await test.step('Verify date selection', async () => {
+        const expectedDateText = `${relativeDate.day} ${relativeDate.month}, ${relativeDate.year}`;
+        await expect(homePage.getDateField()).toContainText(expectedDateText);
+    });
 });

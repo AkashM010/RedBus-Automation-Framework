@@ -1,4 +1,5 @@
 import { Page, Locator } from '@playwright/test'
+import { bookingTestData } from '../utils/testData';
 
 
 export class HomePage {
@@ -23,6 +24,18 @@ export class HomePage {
         return this.searchBtnLocator;
     }
 
+    getSrcField() {
+        return this.srcFieldLocator;
+    }
+
+    getDstField() {
+        return this.dstFieldLocator;
+    }
+
+    getDateField() {
+        return this.dateFieldLocator;
+    }
+
     async navigate() {
         return await this.page.goto('https://www.redbus.in/');
     }
@@ -40,11 +53,11 @@ export class HomePage {
     }
 
     async selectSourceFromDropdown(source: string) {
-        await this.page.getByRole('heading', { name: source }).click();
+        await this.page.getByRole('heading', { name: source, exact: true }).first().click();
     }
 
     async selectDestinationFromDropdown(destination: string) {
-        await this.page.getByRole('heading', { name: destination }).click();
+        await this.page.getByRole('heading', { name: destination, exact: true }).first().click();
     }
 
     async clickDateField() {
@@ -68,5 +81,16 @@ export class HomePage {
         }
 
         return await this.page.getByRole('button', { name: targetDate }).click();
+    }
+
+    async performFullSearch(srcShort: string, srcLong: string, dstShort: string, dstLong: string, date: any)  {
+        await this.fillSourceField(srcShort);
+        await this.selectSourceFromDropdown(srcLong);
+        await this.fillDestinationField(dstShort);
+        await this.selectDestinationFromDropdown(dstLong);
+        await this.clickDateField();
+        await this.selectDate(date.day, date.month, date.year);
+
+        await this.clickSearchBtn();
     }
 }
