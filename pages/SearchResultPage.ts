@@ -32,8 +32,4 @@ export class SearchResultPage {
         const busCardToClick = busCards.nth(randomBusCardIndex);
         await busCardToClick.getByRole('button', { name: /View Seats/i }).click();
     }
-
-
-
-
 }

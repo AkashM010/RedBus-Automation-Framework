@@ -75,5 +75,4 @@ export class BookingPage {
         const randomDpIndex = Math.floor(Math.random() * droppingPointsCount);
         await droppingPoints.nth(randomDpIndex).click();
     }
-
 }

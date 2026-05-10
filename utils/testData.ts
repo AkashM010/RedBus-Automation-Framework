@@ -24,7 +24,6 @@ export const bookingTestData = {
     getRandomFilter: () => {
         const filters = ['AC', 'SLEEPER', 'SINGLE SEATS', 'SEATER', 'NONAC'];
         const randomIndex = Math.floor(Math.random() * filters.length);
-        // console.log(`Filter selected: ${filters[randomIndex]}`);
         return filters[randomIndex];
     }
 };

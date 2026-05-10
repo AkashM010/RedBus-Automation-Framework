@@ -8,7 +8,6 @@ test.beforeEach(async ({ page }) => {
     homePage = new HomePage(page);
 
     await homePage.navigate();
-
 })
 
 test('UI Validation: Verify core elements are visible', async ({ page }) => {

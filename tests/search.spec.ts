@@ -39,6 +39,4 @@ test('Filter Validation: Apply Random Filter and Verify Results', async ({ page 
         const busCount = await searchResultPage.getBusCards().count();
         expect(busCount).toBeGreaterThan(0);
     });
-
-
 });
