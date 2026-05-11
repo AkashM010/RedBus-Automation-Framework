@@ -1,4 +1,4 @@
-# 🚌 RedBus UI Automation Project
+# 🚌 Redbus End-to-End Automation Framework
 
 [![Playwright Tests](https://github.com/AkashM010/RedBus-Automation-Framework/actions/workflows/playwright.yml/badge.svg)](https://github.com/AkashM010/RedBus-Automation-Framework/actions/workflows/playwright.yml)
 
